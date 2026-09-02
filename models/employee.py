@@ -2,10 +2,21 @@ import re
 from datetime import datetime
 from typing import Tuple, Dict, Any
 
-class Employee:
-    """Represents an Employee with basic details and validation methods."""
+_EMAIL_PATTERN = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
 
-    def __init__(self, employee_id: str, name: str, email: str, department: str, designation: str, joining_date: str):
+
+class Employee:
+    """Represents an Employee with core attributes and field validation methods."""
+
+    def __init__(
+        self,
+        employee_id: str,
+        name: str,
+        email: str,
+        department: str,
+        designation: str,
+        joining_date: str
+    ) -> None:
         self.employee_id = employee_id.strip()
         self.name = name.strip()
         self.email = email.strip()
@@ -31,14 +42,12 @@ class Employee:
 
     @staticmethod
     def validate_email(email: str) -> Tuple[bool, str]:
-        """Validates that the email matches a standard format and is not empty."""
+        """Validates that the email matches standard format and is not empty."""
         cleaned_email = email.strip() if email else ""
         if not cleaned_email:
             return False, "Email cannot be empty."
-        
-        # Standard email validation regex
-        email_regex = r"^[\w\.-]+@[\w\.-]+\.\w+$"
-        if not re.match(email_regex, cleaned_email):
+
+        if not _EMAIL_PATTERN.match(cleaned_email):
             return False, "Email is invalid. Please use a format like user@domain.com."
         return True, ""
 
@@ -48,7 +57,7 @@ class Employee:
         cleaned_date = joining_date.strip() if joining_date else ""
         if not cleaned_date:
             return False, "Joining date cannot be empty."
-        
+
         try:
             datetime.strptime(cleaned_date, "%Y-%m-%d")
             return True, ""
@@ -67,13 +76,13 @@ class Employee:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Employee':
+    def from_dict(cls, data: Dict[str, Any]) -> "Employee":
         """Deserializes a dictionary into an Employee object."""
         return cls(
-            employee_id=data.get("employee_id", ""),
-            name=data.get("name", ""),
-            email=data.get("email", ""),
-            department=data.get("department", ""),
-            designation=data.get("designation", ""),
-            joining_date=data.get("joining_date", "")
+            employee_id=str(data.get("employee_id", "")),
+            name=str(data.get("name", "")),
+            email=str(data.get("email", "")),
+            department=str(data.get("department", "")),
+            designation=str(data.get("designation", "")),
+            joining_date=str(data.get("joining_date", ""))
         )
